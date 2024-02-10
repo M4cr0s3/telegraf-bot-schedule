@@ -6,8 +6,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "nodemon ./src/main.ts",
-    "build": "yarn install && npx tsc -p tsconfig.json && npx prisma generate",
-    "start": "npx node ./dist/main.js"
+    "build": "yarn install && npx prisma generate",
+    "start": "npx tsx ./src/main.ts"
 	},
 	"keywords": [],
 	"author": "",
