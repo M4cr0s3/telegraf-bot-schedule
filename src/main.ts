@@ -43,17 +43,17 @@ import { ConfigService } from './services/config';
 // 	const chatId = String(ctx?.chat?.id);
 
 // 	try {
-		// const todayDate = Math.floor(new Date().getTime() / 1000);
-		// const response = await axios.get<ReshaloResponse>(
-		// 	`https://api.it-reshalo.ru//schedule?filter=41&type=group&date=${todayDate}`,
-		// );
-		// const todaySchedule = response.data.result.final.reverse();
+// const todayDate = Math.floor(new Date().getTime() / 1000);
+// const response = await axios.get<ReshaloResponse>(
+// 	`https://api.it-reshalo.ru//schedule?filter=41&type=group&date=${todayDate}`,
+// );
+// const todaySchedule = response.data.result.final.reverse();
 
-		// let answer = '';
+// let answer = '';
 
-		// answer = makeAnswer(todaySchedule);
+// answer = makeAnswer(todaySchedule);
 
-		// await ctx.telegram.sendMessage(chatId, answer);
+// await ctx.telegram.sendMessage(chatId, answer);
 // 	} catch (error) {}
 // });
 
@@ -92,9 +92,13 @@ import { ConfigService } from './services/config';
 //     )
 // })
 
-
 const bot = new Bot(
 	ConfigService.getInstance(),
 	PrismaRepository.getInstance(),
 );
+
 bot.init();
+console.log(
+	'Бот запущен',
+	process.env.NODE_ENV === 'production' ? 'в продакшене' : 'в разработке',
+);
