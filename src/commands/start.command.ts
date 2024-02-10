@@ -1,6 +1,6 @@
 import { Telegraf } from 'telegraf';
 import { Command } from './';
-import { PrismaRepository } from '../repository';
+import { PrismaRepository } from '../repositories';
 import { CreateUserDto } from '../DTO';
 
 export class StartCommand extends Command {

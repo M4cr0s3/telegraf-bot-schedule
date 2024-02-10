@@ -1,6 +1,6 @@
 import { PrismaClient, User } from '@prisma/client';
 import { UserRepository } from '.';
-import { CreateUserDto } from '../DTO';
+import { CreateUserDto, UpdateUserDto } from '../DTO';
 
 export class PrismaRepository implements UserRepository {
 	private static _instance: PrismaRepository;
@@ -45,5 +45,20 @@ export class PrismaRepository implements UserRepository {
 	public async getAll(): Promise<User[]> {
 		const users = await this.prisma.user.findMany();
 		return users;
+	}
+
+	public async update(id: number, dto: UpdateUserDto): Promise<User | null> {
+		const user = await this.getById(id);
+
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		return await this.prisma.user.update({
+			where: {
+				userId: id,
+			},
+			data: dto,
+		});
 	}
 }

@@ -1,11 +1,14 @@
 import { Telegraf } from 'telegraf';
 import { IConfigService } from '../services/config';
-import { Command, ScheduleCommand, StartCommand } from '../commands';
-import { PrismaRepository } from '../repository';
+import {
+	Command,
+	ScheduleCommand,
+	SettingsCommand,
+	StartCommand,
+} from '../commands';
+import { ICacheRepository, PrismaRepository } from '../repositories';
 import { CronJob } from 'cron';
-import { makeAnswer } from '../utils';
-import { ReshaloResponse } from '../types/types';
-import axios from 'axios';
+import { getSchedule } from '../utils';
 
 export class Bot {
 	public bot: Telegraf;
@@ -14,6 +17,7 @@ export class Bot {
 	constructor(
 		private readonly configService: IConfigService,
 		private readonly prismaRepository: PrismaRepository,
+		private readonly redisRepository: ICacheRepository,
 	) {
 		this.bot = new Telegraf(this.configService.get('BOT_TOKEN'));
 	}
@@ -22,20 +26,16 @@ export class Bot {
 		this.commands = [
 			new StartCommand(this.bot, this.prismaRepository),
 			new ScheduleCommand(this.bot),
+			new SettingsCommand(
+				this.bot,
+				this.prismaRepository,
+				this.redisRepository,
+			),
 		];
+
 		for (const command of this.commands) {
 			command.execute();
 		}
-
-		// new CronJob(
-		// 	'* * * * *',
-		// 	async () => {
-		// 		await this.notificateAllUsers();
-		// 	},
-		// 	null,
-		// 	true,
-		// 	'Europe/Moscow',
-		// );
 
 		await this.bot.launch();
 	}
@@ -43,22 +43,17 @@ export class Bot {
 	public async notificateAllUsers() {
 		const users = await this.prismaRepository.getAll();
 
+		let answer = await getSchedule(
+			new Date().setDate(new Date().getDate() + 1),
+		);
+
+		if (answer) {
+			answer +=
+				'🔔 — это уведомление от Cron. Находится в тестовом режиме.';
+		}
+
 		for (const user of users) {
-			try {
-				const todayDate = Math.floor(new Date().getTime() / 1000);
-				const response = await axios.get<ReshaloResponse>(
-					`https://api.it-reshalo.ru//schedule?filter=41&type=group&date=${todayDate}`,
-				);
-				const todaySchedule = response.data.result.final.reverse();
-
-				let answer = '';
-
-				answer = makeAnswer(todaySchedule, todayDate);
-
-				await this.bot.telegram.sendMessage(user.userId, answer);
-			} catch (error) {
-				console.log(error);
-			}
+			await this.bot.telegram.sendMessage(user.userId, answer);
 		}
 	}
 }
