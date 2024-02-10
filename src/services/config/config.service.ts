@@ -13,7 +13,7 @@ export class ConfigService implements IConfigService {
 		}
 		ConfigService._instance = this;
 
-		const { error, parsed } = config();
+		const { error, parsed } = config({ path: `.env.${process.env.NODE_ENV}` });
 
 		if (error) {
 			throw new Error('Не найден файл .env');
