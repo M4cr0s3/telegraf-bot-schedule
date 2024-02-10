@@ -24,3 +24,5 @@ console.log(
 	'Бот запущен',
 	process.env.NODE_ENV === 'production' ? 'в продакшене' : 'в разработке',
 );
+
+app.listen({ port: 3000 }).then(() => console.log("Listening on port", 3000));
