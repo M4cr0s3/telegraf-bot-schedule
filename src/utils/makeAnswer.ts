@@ -1,0 +1,24 @@
+import { Para } from '../types/types';
+
+export function makeAnswer(schedule: Para[], date: number): string {
+	let answer = `⚡️Расписание на ${new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}⚡️\n\n`;
+
+	if (schedule.length === 0) {
+		answer = `🌀Нет расписания на ${new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}🌩\n\n`;
+	}
+
+	for (const para of schedule) {
+		if (para.lesson.name === 'Численные методы') {
+			answer += `${para.para} пара — ${para.lesson.name}` + '👩🏻‍💻' + '\n';
+		} else if (para.lesson.name === 'История') {
+			answer += `${para.para} пара — ${para.lesson.name}` + '📜' + '\n';
+		} else if (
+			para.lesson.name ===
+			'МДК 05.01 Проектирование и дизайн информационных систем'
+		) {
+			answer += `${para.para} пара — ${para.lesson.name}` + '😴' + '\n';
+		}
+	}
+
+	return answer;
+}
