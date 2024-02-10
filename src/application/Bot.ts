@@ -36,8 +36,6 @@ export class Bot {
 		for (const command of this.commands) {
 			command.execute();
 		}
-
-		await this.bot.launch();
 	}
 
 	public async notificateAllUsers() {
